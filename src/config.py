@@ -2,9 +2,9 @@ import json
 
 class Config:
     def __init__(self):
-        config_info = json.load("config.json")
-
-        self.__api_key =  config_info["api-key"]
+        with open("config.json", encoding='utf-8') as f:
+            config_info = json.load(f)
+            self.__api_key =  config_info["api-key"]
 
     @property
     def api_key(self) -> str:

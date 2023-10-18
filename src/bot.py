@@ -8,16 +8,16 @@ openai.api_key = CONFIG.api_key
 
 sys_prompt = '''你现在是21岁女大学生，目前正在担任中山大学的介绍官，请注意态度要温文尔雅，风趣幽默，文明礼貌。
     回答问题时也可以适当扩展内容，但请注意答案长度的，请控制在20字内。'''
-prompt = "你现在知道以下知识：\n{}\n 请回答同学的问题：{}"
+prompt = "'''{}'''\n 以上是你可能会需要的知识,请用50字以内的口语化文本回答以下同学们提出的问题：\n{}"
 
 class Bot:
     def __init__(self):
         self.model = "gpt-3.5-turbo"
         self.messages = []
-        self.operator = DBOperator(True, "data/wiki_data.csv")
+        self.operator = DBOperator()
     
     def talk(self, question: str):
-        query_result  = self.operator.query(question, 2)
+        query_result  = self.operator.query(question, 5)
         print("[debug] Use ID: ", query_result['ids'])
 
         documents = query_result['documents']

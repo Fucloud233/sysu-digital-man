@@ -3,26 +3,29 @@ import pandas as pd
 
 from chromadb.utils import embedding_functions
 
+COLLECTION_NAME = "test-documents"
+DATA_PATH = "data/wiki_data.csv"
+
 class DBOperator:
-    def __init__(self, data_path: str, auto_load: bool=False):
+    def __init__(self, is_persistend=True):
         sentence_transformer = \
             embedding_functions.SentenceTransformerEmbeddingFunction('paraphrase-multilingual-MiniLM-L12-v2')
 
-        self.client = chromadb.Client()
-        self.collection = self.client.create_collection("test-documents", \
+        if is_persistend:
+            self.client = chromadb.PersistentClient(path="model/chromadb")
+        else:
+            self.client = chromadb.Client()
+        
+        self.collection = self.client.get_or_create_collection(COLLECTION_NAME, \
             embedding_function=sentence_transformer)
         
-        # 加载文档
-        if auto_load:
-            self.load_documents(data_path)
+        if self.collection.count() == 0:
+            self.__load_documents(DATA_PATH)
 
-    def load_documents(self, data_path: str):
-        df = pd.read_csv(data_path)
-
+    def __load_documents(self, data_path: str):
+        df = pd.read_csv(data_path, dtype=str)
         # 对id预处理
-        ids: list[str] = df["id"].to_list()
-        ids = [ id.split(',') for id in ids]
-
+        ids = df["id"].to_list()
         documents = df['document'].to_list()
         self.add_documents(documents, ids)
 

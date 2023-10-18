@@ -21,9 +21,13 @@ from bot import Bot
 
 def main():
     bot = Bot()
-    question = input("Please input question：")
-    answer = bot.talk(question)
-    print("Answer: ", answer)
+    while True:
+        question = input("Please input question：")
+        if question == 'exit':
+            break
+
+        answer = bot.talk(question)
+        print("Answer: ", answer)
 
 
 if __name__ == '__main__':
