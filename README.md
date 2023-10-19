@@ -9,7 +9,9 @@
 * chroma: 向量数据库
 * sentence-transformers: 中文Sentence Embedding
 
-> 安装sentence-transformers时，会下载所需要的模型，可能会占用较大的存储空间。
+> 前面两个可以使用conda安装，后面两个需要用pip安装
+> 
+> 在第一次运行时，会自动下载所需要的中文Embedding模型从 
 
 ## 配置密钥
 
