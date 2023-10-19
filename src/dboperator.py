@@ -29,6 +29,14 @@ class DBOperator:
         documents = df['document'].to_list()
         self.add_documents(documents, ids)
 
+    def reload_documents(self, data_path: str):
+        # 删除原始colletion后，重新创建
+        self.client.delete_collection(COLLECTION_NAME)
+        self.client.create_collection(COLLECTION_NAME)
+        self.collection = self.client.get_collection(COLLECTION_NAME)
+
+        self.__load_documents(data_path)
+
     def add_documents(self, documents, ids):
         self.collection.add(
             documents=documents,
@@ -43,3 +51,4 @@ class DBOperator:
             n_results = n
         )
 
+DBOPT = DBOperator(True)

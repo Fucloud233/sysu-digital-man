@@ -1,8 +1,11 @@
-import pandas as pd
-import pprint
+import fire 
+import sys
 
-from dboperator import DBOperator
+from dboperator import DBOPT
 from bot import Bot
+
+
+WIKI_DATA_PATH = "data/wiki_data.csv"
 
 # def main():
 #     df = pd.read_csv('./data.csv')
@@ -19,16 +22,19 @@ from bot import Bot
 
 #     pprint.pprint(result)
 
-def main():
+def main(reload: bool=False):
+    # 重新加载向量数据库
+    if reload: DBOPT.reload_documents(WIKI_DATA_PATH)
+
     bot = Bot()
     while True:
         question = input("Please input question：")
         if question == 'exit':
-            break
+            sys.exit(0)
 
         answer = bot.talk(question)
         print("Answer: ", answer)
 
 
 if __name__ == '__main__':
-    main()
+    fire.Fire(main())
