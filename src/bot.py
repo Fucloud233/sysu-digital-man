@@ -1,4 +1,6 @@
 import openai
+from abc import abstractmethod
+from enum import Enum
 from datetime import datetime
 
 from config import CONFIG
@@ -18,10 +20,15 @@ sorry_prompt = "{}\n以上是同学向你问的问题，你可能不需要回答
     "在必要时使用口语化的表达委婉地告诉他不想回答这个问题，控制回答字数在20字以内"
 
 
+class BotType(Enum):
+    GPT = 0,
+    Qianwen = 1,
+
+
 class Bot:
-    def __init__(self):
-        self.model = "gpt-3.5-turbo"
+    def __init__(self, type: BotType):
         self.messages = []
+        self.type = type
 
     def talk(self, question: str):
         begin_tick = datetime.now()
@@ -34,22 +41,14 @@ class Bot:
         query_tick = datetime.now()
 
         # 如果距离过大 说明问题和中山大学没什么关系
-        if query_result['distances'][0][0] > 10:
+        if query_result['distances'][0][0] > 1:
             cur_prompt = sorry_prompt.format(question)
         else:
-
             documents = query_result['documents']
             cur_prompt = prompt.format(documents, question)
 
         try:
-            response = openai.ChatCompletion.create(
-                model = self.model,
-                messages = [
-                    {"role": "system", "content": sys_prompt},
-                    {"role": "user", "content": cur_prompt},
-                ],
-                temperature = 0
-            )
+            answer = self._call_api(cur_prompt)
         except openai.APIError as e:
             print("[debug]", e)
             return '不好意思，系统出了些问题，请换个问题问吧？'
@@ -62,7 +61,29 @@ class Bot:
             cal_time(begin_tick, end_tick)
         ))
 
-        return response['choices'][0]['message']['content']
+        return answer
+    
+    @abstractmethod
+    def _call_api(self, prompt: str):
+        pass
 
 # Load your API key from an environment variable or secret management service
 
+
+class GPTBot(Bot):
+    def __init__(self):
+        super().__init__(BotType.GPT)
+        self.model = "gpt-3.5-turbo"
+        self.messages = []
+
+    def _call_api(self, prompt: str):
+        response = openai.ChatCompletion.create(
+            model = self.model,
+            messages = [
+                {"role": "system", "content": sys_prompt},
+                {"role": "user", "content": prompt},
+            ],
+            temperature = 0
+        )
+    
+        return response['choices'][0]['message']['content']

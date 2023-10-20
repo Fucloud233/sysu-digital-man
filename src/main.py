@@ -1,8 +1,8 @@
-import fire 
+import fire
 import sys
 
 from dboperator import DBOPT
-from bot import Bot
+from bot import GPTBot
 
 
 WIKI_DATA_PATH = "data/wiki_data.csv"
@@ -22,18 +22,21 @@ WIKI_DATA_PATH = "data/wiki_data.csv"
 
 #     pprint.pprint(result)
 
-def main(reload: bool=False):
+def main(reload: bool=False, type: int=0):
     # 重新加载向量数据库
     if reload: DBOPT.reload_documents(WIKI_DATA_PATH)
-
-    bot = Bot()
+    
+    # 配置调用的LLM
+    match type:
+        case 0: bot = GPTBot()
+        
     while True:
-        question = input("Please input question：")
+        question = input("You: ")
         if question == 'exit':
             sys.exit(0)
 
         answer = bot.talk(question)
-        print("Answer: ", answer)
+        print("Bot:", answer)
 
 
 if __name__ == '__main__':
