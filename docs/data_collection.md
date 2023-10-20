@@ -16,3 +16,9 @@
 4. 中山大学 校史：http://www.sysutt.com/web/xs/column.html#
 5. 中山大学 官网: https://www.sysu.edu.cn/xxg/zdjj1.htm
 6. baidubaike: https://baike.baidu.com/item/%E4%B8%AD%E5%B1%B1%E5%A4%A7%E5%AD%A6/5672
+
+# Model
+
+1. qianfan: https://cloud.baidu.com/doc/WENXINWORKSHOP/s/xlmokikxe
+2. xinghuo: https://www.xfyun.cn/doc/spark/Web.html#_1-%E6%8E%A5%E5%8F%A3%E8%AF%B4%E6%98%8E
+3. qianwen: https://help.aliyun.com/zh/dashscope/developer-reference/install-dashscope-sdk
