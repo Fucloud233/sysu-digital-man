@@ -9,7 +9,7 @@ DATA_PATH = "data/wiki_data.csv"
 class DBOperator:
     def __init__(self, is_persistend=True):
         sentence_transformer = \
-            embedding_functions.SentenceTransformerEmbeddingFunction('paraphrase-multilingual-MiniLM-L12-v2')
+            embedding_functions.SentenceTransformerEmbeddingFunction('distiluse-base-multilingual-cased-v2')
 
         if is_persistend:
             self.client = chromadb.PersistentClient(path="model/chromadb")
