@@ -1,23 +1,29 @@
 import chromadb
 import pandas as pd
 
+from config import CONFIG
 from chromadb.utils import embedding_functions
 
 COLLECTION_NAME = "test-documents"
 DATA_PATH = "data/wiki_data.csv"
 
+OPENAI_EF = embedding_functions.OpenAIEmbeddingFunction(
+    api_key=CONFIG.api_key,
+    model_name="text-embedding-ada-002"
+)
+
+SENTENCE_TRANSFORMER_EF = \
+    embedding_functions.SentenceTransformerEmbeddingFunction('distiluse-base-multilingual-cased-v1')
+
 class DBOperator:
     def __init__(self, is_persistend=True):
-        sentence_transformer = \
-            embedding_functions.SentenceTransformerEmbeddingFunction('distiluse-base-multilingual-cased-v2')
-
         if is_persistend:
             self.client = chromadb.PersistentClient(path="model/chromadb")
         else:
             self.client = chromadb.Client()
         
         self.collection = self.client.get_or_create_collection(COLLECTION_NAME, \
-            embedding_function=sentence_transformer)
+            embedding_function=SENTENCE_TRANSFORMER_EF)
         
         if self.collection.count() == 0:
             self.__load_documents(DATA_PATH)
@@ -28,11 +34,13 @@ class DBOperator:
         ids = df["id"].to_list()
         documents = df['document'].to_list()
         self.add_documents(documents, ids)
+        self.collection.update()
 
     def reload_documents(self, data_path: str):
         # 删除原始colletion后，重新创建
         self.client.delete_collection(COLLECTION_NAME)
-        self.client.create_collection(COLLECTION_NAME)
+        # 记得切换中文Embedding
+        self.client.create_collection(COLLECTION_NAME, embedding_function=SENTENCE_TRANSFORMER_EF)
         self.collection = self.client.get_collection(COLLECTION_NAME)
 
         self.__load_documents(data_path)
@@ -42,6 +50,10 @@ class DBOperator:
             documents=documents,
             ids=ids
         )
+    
+    def display(self):
+        # self.collection.
+        pass
 
     def query(self, query_text, n: int=1):
         # print(self.collection.count())
