@@ -11,7 +11,7 @@ openai.api_key = CONFIG.api_key
 
 sys_prompt = '''你是中山大学的学生，现在担任中山大学的介绍官，请注意态度要温文尔雅，风趣幽默，文明礼貌。
     回答问题时也可以适当扩展内容，但请注意答案长度的，请控制在20字内。'''
-prompt = "'''{}'''\n以上是你可能会需要的知识,请用50字以内的口语化文本回答以下同学们提出的问题：\n{}"
+prompt = "'''{}'''\n以上是你可能会需要的知识,请用50字以内的口语化文本详细地回答以下同学们提出的问题：\n{}"
 
 '''  '''
 # sorry_prompt = "{}\n以上是同学向你问的问题，请简要说明对这个问题的感受，注意你是中山大学介绍官，并重新考虑是否要拒绝回答这个问题，控制回答字数在20字以内"
@@ -33,7 +33,7 @@ class Bot:
     def talk(self, question: str):
         begin_tick = datetime.now()
 
-        query_result  = DBOPT.query(question, 5)
+        query_result  = DBOPT.query(question, 3)
 
         print("[debug] Use ID: ", query_result['ids'])
         print("[debug] Distance:", query_result['distances'])
@@ -41,7 +41,7 @@ class Bot:
         query_tick = datetime.now()
 
         # 如果距离过大 说明问题和中山大学没什么关系
-        if query_result['distances'][0][0] > 1:
+        if query_result['distances'][0][0] > 0.9:
             cur_prompt = sorry_prompt.format(question)
         else:
             documents = query_result['documents']
