@@ -34,10 +34,10 @@ import sys
 sys.path.append("./ai_module")
 sys.path.append("./ai_module/enhance")
 
-from enhance.bot import GPTBot
+from ai_module.enhance.bots.gpt_bot import GPTBot as Bot
 
 def question(content):
-    return GPTBot().talk(content)
+    return Bot().talk(content)
 
 
 if __name__ == '__main__':
