@@ -13,7 +13,7 @@ def cal_time(begin: datetime, end: datetime):
 
 openai.api_key = CONFIG.api_key
 
-sys_prompt = '''你是中山大学的学生，现在担任中山大学的介绍官，请注意态度要温文尔雅，风趣幽默，文明礼貌。
+SYS_PROMPT = '''你是中山大学的学生，现在担任中山大学的介绍官，请注意态度要温文尔雅，风趣幽默，文明礼貌。
     回答问题时也可以适当扩展内容，但请注意答案长度的，请控制在20字内。'''
 prompt = "你现在知道这些知识：{}\n有同学问你这个问题：{}\n作为中山大学的介绍官，请用口语化文本清晰地回答同学们提出的问题，并一定要控制回答再50字以内！"
 
@@ -27,12 +27,14 @@ sorry_prompt = "{}\n以上是同学向你问的问题，你可能不需要回答
 class BotType(Enum):
     GPT = 0,
     Qianwen = 1,
+    RWKV = 2,
 
 
 class Bot:
     def __init__(self, type: BotType):
         self.messages = []
         self.type = type
+        self.sys_prompt = SYS_PROMPT
 
     def talk(self, question: str):
         begin_tick = datetime.now()
@@ -72,22 +74,3 @@ class Bot:
         pass
 
 # Load your API key from an environment variable or secret management service
-
-
-class GPTBot(Bot):
-    def __init__(self):
-        super().__init__(BotType.GPT)
-        self.model = "gpt-3.5-turbo"
-        self.messages = []
-
-    def _call_api(self, prompt: str):
-        response = openai.ChatCompletion.create(
-            model = self.model,
-            messages = [
-                {"role": "system", "content": sys_prompt},
-                {"role": "user", "content": prompt},
-            ],
-            temperature = 0
-        )
-    
-        return response['choices'][0]['message']['content']
