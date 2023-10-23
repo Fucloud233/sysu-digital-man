@@ -1,3 +1,7 @@
+import sys
+sys.path.append("./ai_module")
+sys.path.append("./ai_module/enhance")
+
 from dboperator import DBOPT
 
 # 预加载DBOPT

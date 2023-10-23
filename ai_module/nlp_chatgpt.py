@@ -30,10 +30,6 @@
 #         return 'gpt当前繁忙，请稍后重试' + e
 
 # 添加工作路径
-import sys
-sys.path.append("./ai_module")
-sys.path.append("./ai_module/enhance")
-
 from ai_module.enhance.bots.gpt_bot import GPTBot as Bot
 
 def question(content):
