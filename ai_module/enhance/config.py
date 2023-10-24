@@ -1,7 +1,4 @@
-# import json
-import sys
-sys.path.append('.')
-
+from bots.bot import BotType
 from utils import config_util
 
 class Config:
@@ -9,13 +6,24 @@ class Config:
         # with open("config.json", encoding='utf-8') as f:
         #     config_info = json.load(f)
         #     self.__api_key =  config_info["api-key"]
-        self.__api_key = config_util.key_chatgpt_api_key
+        self.__openai_api_key = config_util.key_chatgpt_api_key
+        self.__qianfan_api_key = config_util.key_qianfan_api_key
+        self.__qianfan_api_secret = config_util.key_qianfan_api_secret
         pass
 
-    @property
-    def api_key(self) -> str:
-        return self.__api_key
+    def api_key(self, bot_type: BotType) -> (str, str):
+        key = None
+        secret = None
+        match bot_type:
+            case BotType.GPT: key = self.__openai_api_key
+            case BotType.Qianfan: 
+                key = self.__qianfan_api_key
+                secret = self.__qianfan_api_secret
+            case _: raise ValueError(f'The key of "{bot_type}" not found!')
+
+        return (key, secret)
         
+    
 CONFIG = Config()
 
 '''
