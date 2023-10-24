@@ -40,6 +40,10 @@ def load_config():
     global key_ngrok_cc_id
     global key_yuan_1_0_account
     global key_yuan_1_0_phone
+
+    global key_qianfan_api_key
+    global key_qianfan_api_secret
+
     global key_chatgpt_api_key
     global key_chat_module
     global key_gpt_access_token
@@ -65,6 +69,10 @@ def load_config():
     key_yuan_1_0_account = system_config.get('key', 'yuan_1_0_account')
     key_yuan_1_0_phone = system_config.get('key', 'yuan_1_0_phone')
     key_chatgpt_api_key = system_config.get('key', 'chatgpt_api_key')
+
+    key_qianfan_api_key = system_config.get('key', 'qiafan_api_key')
+    key_qianfan_api_secret = system_config.get('key', 'qiafan_api_secret')
+
     key_chat_module = system_config.get('key', 'chat_module')
     key_gpt_access_token = system_config.get('key', 'gpt_access_token')
     key_gpt_conversation_id = system_config.get('key', 'gpt_conversation_id')
