@@ -31,15 +31,9 @@ from utils import config_util as cfg
 from core.content_db import Content_Db
 from datetime import datetime
 
-from ai_module import nlp_rasa
-from ai_module import nlp_chatgpt
-from ai_module import nlp_gpt
-from ai_module import nlp_yuan
-from ai_module import yolov8
-from ai_module import nlp_VisualGLM
-from ai_module import nlp_lingju
-from ai_module import nlp_rwkv_api
-from ai_module import nlp_ChatGLM2
+# 根据botype得到对应Bot
+from ai_module.enhance import get_bot
+from ai_module.enhance.bots.bot import BotType
 
 import platform
 if platform.system() == "Windows":
@@ -48,17 +42,15 @@ if platform.system() == "Windows":
     from test_olipsync import LipSyncGenerator
     
 modules = {
-    "nlp_yuan": nlp_yuan, 
-    "nlp_gpt": nlp_gpt,
-    "nlp_chatgpt": nlp_chatgpt,
-    "nlp_rasa": nlp_rasa,
-    "nlp_VisualGLM": nlp_VisualGLM,
-    "nlp_lingju": nlp_lingju,
+    # "nlp_yuan": nlp_yuan, 
+    # "nlp_gpt": nlp_gpt,
+    "nlp_chatgpt": BotType.GPT,
+    # "nlp_rasa": nlp_rasa,
+    # "nlp_VisualGLM": nlp_VisualGLM,
+    # "nlp_lingju": nlp_lingju,
     "nlp_rwkv_api":nlp_rwkv_api,
-    "nlp_chatglm2": nlp_ChatGLM2
-
+    # "nlp_chatglm2": nlp_ChatGLM2
 }
-
 
 def determine_nlp_strategy(sendto,msg):
     text = ''
