@@ -1,7 +1,9 @@
 import openai
 
 from enhance.bots.bot import Bot, BotType
+from config import CONFIG
 
+openai.api_key = CONFIG.api_key
 
 class GPTBot(Bot):
     def __init__(self):
