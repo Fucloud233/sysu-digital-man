@@ -133,4 +133,4 @@ fay.db
 # 模型文件
 model/
 # key信息
-system.conf.bak
+system.conf
