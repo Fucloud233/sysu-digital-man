@@ -40,6 +40,9 @@ def __clear_logs():
 
 
 if __name__ == '__main__':
+    if sys.version_info < (3, 10):
+        raise ImportError("Python版本必须大于等于 3.10!")
+
     __clear_samples()
     __clear_songs()
     __clear_logs()
