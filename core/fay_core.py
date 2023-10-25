@@ -33,57 +33,58 @@ from datetime import datetime
 
 # 根据botype得到对应Bot
 from ai_module.enhance import get_bot
-from ai_module.enhance.bots.bot import BotType
+from ai_module.enhance.bots.type import BotType
 
-import platform
-if platform.system() == "Windows":
-    import sys
-    sys.path.append("test/ovr_lipsync")
-    from test_olipsync import LipSyncGenerator
+# [ignore] 忽略测试函数
+# import platform
+# if platform.system() == "Windows":
+#     import sys
+#     sys.path.append("test/ovr_lipsync")
+#     from test_olipsync import LipSyncGenerator
     
 modules = {
     # "nlp_yuan": nlp_yuan, 
     # "nlp_gpt": nlp_gpt,
-    "nlp_chatgpt": BotType.GPT,
+    "chatgpt": BotType.GPT,
     # "nlp_rasa": nlp_rasa,
     # "nlp_VisualGLM": nlp_VisualGLM,
     # "nlp_lingju": nlp_lingju,
-    "nlp_rwkv_api":nlp_rwkv_api,
+
+    # [ignore] 暂时忽略RWKV模型的调用
+    # "rwkv": BotType.RWKV,
+    
+    "rwkv_api": BotType.RWKVApi,
+    "qianfan": BotType.Qianfan
     # "nlp_chatglm2": nlp_ChatGLM2
 }
 
-def determine_nlp_strategy(sendto,msg):
+def determine_nlp_strategy(sendto, question):
     text = ''
     textlist = []
     try:
         util.log(1, '自然语言处理...')
         tm = time.time()
-        cfg.load_config()
-        if sendto == 2:
-            text = nlp_chatgpt.question(msg)
-        else:
-            module_name = "nlp_" + cfg.key_chat_module
-            selected_module = modules.get(module_name)
-            if selected_module is None:
-                raise RuntimeError('灵聚key、yuan key、gpt key都没有配置！')   
-            if cfg.key_chat_module == 'rasa':
-                textlist = selected_module.question(msg)
-                text = textlist[0]['text'] 
-            else:
-                text = selected_module.question(msg)  
-            util.log(1, '自然语言处理完成. 耗时: {} ms'.format(math.floor((time.time() - tm) * 1000)))
-            if text == '哎呀，你这么说我也不懂，详细点呗' or text == '':
-                util.log(1, '[!] 自然语言无语了！')
-                text = '哎呀，你这么说我也不懂，详细点呗'  
+
+        # 根据Type选择对应的模型
+        bot_type = modules[cfg.key_chat_module]
+        bot = get_bot(bot_type)
+
+        if bot == None:
+            raise RuntimeError('The bot type "{}" not found!'.format(bot_type))  
+
+        text = bot.talk(question)
+
+        util.log(1, '自然语言处理完成. 耗时: {} ms'.format(math.floor((time.time() - tm) * 1000)))
+        
+        if text == '哎呀，你这么说我也不懂，详细点呗' or text == '':
+            util.log(1, '[!] 自然语言无语了！')
+            text = '哎呀，你这么说我也不懂，详细点呗'  
     except BaseException as e:
-        print(e)
-        util.log(1, '自然语言处理错误！')
+        raise e
+        util.log(1, '自然语言处理错误! {}'.format(e))
         text = '哎呀，你这么说我也不懂，详细点呗'   
 
-    return text,textlist
-    
-    
-
+    return text, textlist
 
 
 #文本消息处理
@@ -240,8 +241,10 @@ class FeiFei:
                                     content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "看不到人，不互动"}}
                                     wsa_server.get_instance().add_cmd(content)
                                  continue
+                        
+                        # [legency] 关闭QA配对文档
+                        # answer = self.__get_answer(interact.interleaver, self.q_msg)#确定是否命中指令或q&a
 
-                        answer = self.__get_answer(interact.interleaver, self.q_msg)#确定是否命中指令或q&a
                         if(self.muting): #静音指令正在执行
                             wsa_server.get_web_instance().add_cmd({"panelMsg": "静音指令正在执行，不互动"})
                             if not cfg.config["interact"]["playSound"]: # 非展板播放
@@ -257,14 +260,14 @@ class FeiFei:
                         text = ''
                         textlist = []
                         self.speaking = True
-                        if answer is None:
-                            wsa_server.get_web_instance().add_cmd({"panelMsg": "思考中..."})
-                            if not cfg.config["interact"]["playSound"]: # 非展板播放
-                                content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "思考中..."}}
-                                wsa_server.get_instance().add_cmd(content)
-                            text,textlist = determine_nlp_strategy(1,self.q_msg)
-                        elif answer != 'NO_ANSWER': #语音内容没有命中指令,回复q&a内容
-                            text = answer
+
+                        # 调用NLP模块信息     
+                        wsa_server.get_web_instance().add_cmd({"panelMsg": "思考中..."})
+                        if not cfg.config["interact"]["playSound"]: # 非展板播放
+                            content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "思考中..."}}
+                            wsa_server.get_instance().add_cmd(content)
+                        text,textlist = determine_nlp_strategy(1,self.q_msg)
+
                         self.a_msg = text
                         contentdb.add_content('fay','speak',self.a_msg)
                         wsa_server.get_web_instance().add_cmd({"panelReply": {"type":"fay","content":self.a_msg}})
