@@ -70,8 +70,8 @@ def load_config():
     key_yuan_1_0_phone = system_config.get('key', 'yuan_1_0_phone')
     key_chatgpt_api_key = system_config.get('key', 'chatgpt_api_key')
 
-    key_qianfan_api_key = system_config.get('key', 'qiafan_api_key')
-    key_qianfan_api_secret = system_config.get('key', 'qiafan_api_secret')
+    key_qianfan_api_key = system_config.get('key', 'qianfan_api_key')
+    key_qianfan_api_secret = system_config.get('key', 'qianfan_api_secret')
 
     key_chat_module = system_config.get('key', 'chat_module')
     key_gpt_access_token = system_config.get('key', 'gpt_access_token')

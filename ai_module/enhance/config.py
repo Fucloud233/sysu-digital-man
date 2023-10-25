@@ -1,4 +1,4 @@
-from bots.bot import BotType
+from bots.type  import BotType
 from utils import config_util
 
 class Config:
@@ -22,6 +22,10 @@ class Config:
             case _: raise ValueError(f'The key of "{bot_type}" not found!')
 
         return (key, secret)
+    
+    @property
+    def openai_api_key(self):
+        return self.__openai_api_key
         
     
 CONFIG = Config()
