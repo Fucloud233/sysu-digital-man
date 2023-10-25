@@ -41,22 +41,6 @@ from ai_module.enhance.bots.type import BotType
 #     import sys
 #     sys.path.append("test/ovr_lipsync")
 #     from test_olipsync import LipSyncGenerator
-    
-modules = {
-    # "nlp_yuan": nlp_yuan, 
-    # "nlp_gpt": nlp_gpt,
-    "chatgpt": BotType.GPT,
-    # "nlp_rasa": nlp_rasa,
-    # "nlp_VisualGLM": nlp_VisualGLM,
-    # "nlp_lingju": nlp_lingju,
-
-    # [ignore] 暂时忽略RWKV模型的调用
-    # "rwkv": BotType.RWKV,
-    
-    "rwkv_api": BotType.RWKVApi,
-    "qianfan": BotType.Qianfan
-    # "nlp_chatglm2": nlp_ChatGLM2
-}
 
 def determine_nlp_strategy(sendto, question):
     text = ''
@@ -66,8 +50,7 @@ def determine_nlp_strategy(sendto, question):
         tm = time.time()
 
         # 根据Type选择对应的模型
-        bot_type = modules[cfg.key_chat_module]
-        bot = get_bot(bot_type)
+        bot = get_bot(cfg.key_chat_module)
 
         if bot == None:
             raise RuntimeError('The bot type "{}" not found!'.format(bot_type))  
