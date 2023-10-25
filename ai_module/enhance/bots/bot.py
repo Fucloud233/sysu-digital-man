@@ -1,17 +1,12 @@
 import openai
 from abc import abstractmethod
-from enum import Enum
 from datetime import datetime
 
 from config import CONFIG
 from dboperator import DBOPT
-# from utils import cal_time
+from bots.type import BotType
+from utils.util import cal_time
 
-def cal_time(begin: datetime, end: datetime):
-    sub_time = end - begin
-    return "%02d.%d"%(sub_time.seconds, sub_time.microseconds)
-
-openai.api_key = CONFIG.api_key
 
 SYS_PROMPT = '''你是中山大学的学生，现在担任中山大学的介绍官，请注意态度要温文尔雅，风趣幽默，文明礼貌。
     回答问题时也可以适当扩展内容，但请注意答案长度的，请控制在20字内。'''
@@ -24,19 +19,12 @@ sorry_prompt = "{}\n以上是同学向你问的问题，请你再考虑一下是
     "如果与中山大学不怎么相关，请注意你是中山大学介绍官的身份，并委婉地拒绝他。" \
     "无论是什么问题，请将回答字数控制在20字以内"
 
-
-class BotType(Enum):
-    GPT = 0,
-    Qianwen = 1,
-    RWKV = 2,
-    Qianfan = 3,
-
-
 class Bot:
     def __init__(self, type: BotType):
         self.messages = []
         self.type = type
         self.sys_prompt = SYS_PROMPT
+        openai.api_key = CONFIG.api_key
 
     def talk(self, question: str):
         begin_tick = datetime.now()
@@ -63,11 +51,7 @@ class Bot:
         
         end_tick = datetime.now()
 
-        print("[debug] Q/G/Total: {}/{}/{}".format(
-            cal_time(begin_tick, query_tick),
-            cal_time(query_tick, end_tick),
-            cal_time(begin_tick, end_tick)
-        ))
+        print("[debug] Time used by Bot: %.3fs"%cal_time(begin_tick, end_tick))
 
         return answer
     

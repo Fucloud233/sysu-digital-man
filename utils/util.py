@@ -3,6 +3,7 @@ import os
 import sys
 import random
 import time
+from datetime import datetime
 
 from core import wsa_server
 from scheduler.thread_manager import MyThread
@@ -10,6 +11,9 @@ from utils import config_util
 
 LOGS_FILE_URL = "logs/log-" + time.strftime("%Y%m%d%H%M%S") + ".log"
 
+def cal_time(begin: datetime, end: datetime):
+    sub_time = end - begin
+    return sub_time.seconds + sub_time.microseconds / 1000000
 
 def random_hex(length):
     result = hex(random.randint(0, 16 ** length)).replace('0x', '').lower()
