@@ -1,15 +1,16 @@
 import openai
 
-from enhance.bots.bot import Bot, BotType
+from bots.bot import Bot
+from bots.type import BotType
 from config import CONFIG
-
-openai.api_key = CONFIG.api_key
 
 class GPTBot(Bot):
     def __init__(self):
         super().__init__(BotType.GPT)
         self.model = "gpt-3.5-turbo"
         self.messages = []
+        
+        openai.api_key = CONFIG.openai_api_key
 
     def _call_api(self, prompt: str):
         response = openai.ChatCompletion.create(

@@ -3,7 +3,8 @@ from ringrwkv.configuration_rwkv_world import RwkvConfig
 from ringrwkv.rwkv_tokenizer import TRIE_TOKENIZER
 from ringrwkv.modehf_world import RwkvForCausalLM
 
-from enhance.bots.bot import Bot, BotType
+from bots.bot import Bot
+from bots.type import BotType
 
 model = RwkvForCausalLM.from_pretrained("RWKV-4-World-1.5B")
 #model = RwkvForCausalLM.from_pretrained("RWKV-4-World-3B")

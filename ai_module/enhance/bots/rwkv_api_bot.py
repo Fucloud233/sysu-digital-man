@@ -1,12 +1,13 @@
 import requests
 import time
 
-from enhance.bots.bot import Bot, BotType
+from bots.bot import Bot
+from bots.type import BotType
 
 
 class RWKVApiBot(Bot):
     def __init__(self):
-        super().__init__(BotType.RWKV)
+        super().__init__(BotType.RWKVApi)
         self.api_url = "https://rwkv.ai-creator.net/chntuned/v1/chat/completions"
 
     def _call_api(self, prompt: str):
