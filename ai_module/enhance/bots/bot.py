@@ -16,28 +16,36 @@ prompt = "你现在知道这些知识：{}\n有同学问你这个问题：{}\n�
 # sorry_prompt = "{}\n以上是同学向你问的问题，请简要说明对这个问题的感受，注意你是中山大学介绍官，并重新考虑是否要拒绝回答这个问题，控制回答字数在20字以内"
 
 sorry_prompt = "{}\n以上是同学向你问的问题，请你再考虑一下是否需要回答这个问题。" \
-    "如果与中山大学不怎么相关，请注意你是中山大学介绍官的身份，并委婉地拒绝他。" \
+    "如果该问题是日常交流中可能会出现的问题，请正常回答他" \
+    "如果该问题不属于日常交流，且与你中山大学介绍官的身份不相关，请委婉地拒绝他。" \
     "无论是什么问题，请将回答字数控制在20字以内"
+
+def cal_average_distance(distances: list[float]):
+    return sum(distances) / len(distances)
 
 class Bot:
     def __init__(self, type: BotType):
         self.messages = []
         self.type = type
         self.sys_prompt = SYS_PROMPT
+
+        # 控制阈值
+        self.query_thresold = 1.2
+
         openai.api_key = CONFIG.api_key
 
     def talk(self, question: str):
         begin_tick = datetime.now()
 
-        query_result  = DBOPT.query(question, 3)
+        query_result  = DBOPT.query(question, 5)
 
         print("[debug] Use ID: ", query_result['ids'])
         print("[debug] Distance:", query_result['distances'])
 
         query_tick = datetime.now()
 
-        # 如果距离过大 说明问题和中山大学没什么关系
-        if round(query_result['distances'][0][0]) > 1.0:
+        # 如果平均距离过大 说明问题和中山大学没什么关系
+        if cal_average_distance(query_result['distances'][0]) > self.query_thresold:
             cur_prompt = sorry_prompt.format(question)
         else:
             documents = query_result['documents']
