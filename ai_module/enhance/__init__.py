@@ -6,7 +6,7 @@ from dboperator import DBOPT
 
 # 预加载DBOPT
 if DBOPT.is_empty:
-    DBOPT.load_documents('data/wiki_data.csv')
+    DBOPT.load_documents('data/sysu_data.csv')
 
 from bots.gpt_bot import GPTBot
 # [ignore] 暂时该模型的调用
