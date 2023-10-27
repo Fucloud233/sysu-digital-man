@@ -1,11 +1,11 @@
 import sys
-sys.path.append('.')
+sys.path.append(".")
 
 from ai_module.enhance import get_bot
 from ai_module.enhance.bots.type import BotType
 
 def main():
-    bot = get_bot(BotType.Qianfan)
+    bot = get_bot("qianfan")
     while(True):
         question = input("You: ")
         if question == 'exit':
