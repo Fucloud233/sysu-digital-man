@@ -43,8 +43,10 @@ class DBOperator:
         # 删除原始colletion后，重新创建
         self.client.delete_collection(COLLECTION_NAME)
         # 记得切换中文Embedding
-        self.client.create_collection(COLLECTION_NAME, embedding_function=SENTENCE_TRANSFORMER_EF)
-        self.collection = self.client.get_collection(COLLECTION_NAME)
+        self.client.create_collection(COLLECTION_NAME, \
+            embedding_function=SENTENCE_TRANSFORMER_EF)
+        self.collection = self.client.get_collection(COLLECTION_NAME, \
+            embedding_function=SENTENCE_TRANSFORMER_EF)
 
         self.load_documents(data_path)
 
