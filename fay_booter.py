@@ -155,13 +155,17 @@ def console_listener():
             stop()
             time.sleep(0.1)
             start()
-
         elif args[0] == 'in':
+            # 命令行检测输入
             if len(args) == 1:
                 util.log(1, '错误的参数！')
+                
+            # msg: 用户输入的句子
             msg = text[3:len(text)]
             util.printInfo(3, "控制台", '{}: {}'.format('控制台', msg))
             feiFei.last_quest_time = time.time()
+            
+            # 封装成一个交互信息
             interact = Interact("console", 1, {'user': '', 'msg': msg})
             thr = MyThread(target=feiFei.on_interact, args=[interact])
             thr.start()
@@ -224,7 +228,20 @@ def start():
     util.log(1, '完成!')
     util.log(1, '使用 \'help\' 获取帮助.')
 
+
+def ask(message):
+    # msg: 用户输入的句子
+    feiFei.last_quest_time = time.time()
     
+    # 向Fay发送消息
+    interact = Interact("console", 1, {'user': '', 'msg': message})
+    thr = MyThread(target=feiFei.on_interact, args=[interact])
+    thr.start()
+    thr.join()
+
+def is_start() -> bool:
+    return __running
+
 
 if __name__ == '__main__':
     ws_server: MyServer = None

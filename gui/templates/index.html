@@ -173,19 +173,15 @@
                                     </div>
                                 </div>
                             </div>
-                                
-                          
-
                              
                               
                             </div>
                             <div class="input-area">
                                 <textarea v-model="send_msg" name="text" id="textarea" placeholder="发送些内容给Fay..."></textarea>
+                                <!-- 此处发送消息给Fay -->
                                 <div class="button-area">
-                                    <button id="send-btn" @click="send(1)">Fay</button>
-                                    
-                                    <!-- <button id="send-btn" @click="send(2)" style="margin-left: 25px;">ChatGPT</button> -->
-                                    
+                                    <!-- <button id="send-btn" @click="send(1)">Fay</button> -->
+                                    <button id="ask-btn" @click="ask()">Ask</button>
                                 </div>
                             </div>
                         </div>

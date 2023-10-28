@@ -42,6 +42,7 @@ from ai_module.enhance.bots.type import BotType
 #     sys.path.append("test/ovr_lipsync")
 #     from test_olipsync import LipSyncGenerator
 
+# NLP 处理代码
 def determine_nlp_strategy(sendto, question):
     text = ''
     textlist = []
@@ -50,10 +51,11 @@ def determine_nlp_strategy(sendto, question):
         tm = time.time()
 
         # 根据Type选择对应的模型
-        bot = get_bot(cfg.key_chat_module)
+        chat_module = cfg.key_chat_module
+        bot = get_bot(chat_module)
 
         if bot == None:
-            raise RuntimeError('The bot type "{}" not found!'.format(bot_type))  
+            raise RuntimeError('The bot type "{}" not found!'.format(chat_module))  
 
         text = bot.talk(question)
 
@@ -71,24 +73,28 @@ def determine_nlp_strategy(sendto, question):
 
 
 #文本消息处理
-def send_for_answer(msg,sendto):
+def send_for_answer(msg, sendto):
         contentdb = Content_Db()
-        contentdb.add_content('member','send',msg)
+        contentdb.add_content('member','send', msg)
         textlist = []
         text = None
+
         # 人设问答
-        keyword = qa_service.question('Persona',msg)
-        if keyword is not None:
-            text = config_util.config["attribute"][keyword]
+        # keyword = qa_service.question('Persona',msg)
+        # if keyword is not None:
+        #     text = config_util.config["attribute"][keyword]
 
         # 全局问答
-        if text is None:
-            answer = qa_service.question('qa',msg)
-            if answer is not None:
-                text = answer       
-            else:
-                text,textlist = determine_nlp_strategy(sendto,msg)
-                
+        # if text is None:
+        #     answer = qa_service.question('qa',msg)
+        #     if answer is not None:
+        #         text = answer       
+        #     else:
+        #         text, textlist = determine_nlp_strategy(sendto,msg)
+
+        
+
+        # 保存fay回答       
         contentdb.add_content('fay','send',text)
         wsa_server.get_web_instance().add_cmd({"panelReply": {"type":"fay","content":text}})
         if len(textlist) > 1:
@@ -99,6 +105,18 @@ def send_for_answer(msg,sendto):
                   i+= 1
         return text
 
+def save_and_show_message(question, answer):
+    # 向数据库添加数据
+    content_db = Content_Db()
+    content_db.add_content('member', 'send', question)
+    content_db.add_content('fay', 'send', answer)
+
+    wsa_server.get_web_instance().add_cmd({
+        "panelReply": {
+            "type": "fay",
+            "content": answer
+        }
+    })    
 
 class FeiFei:
     def __init__(self):
@@ -126,7 +144,10 @@ class FeiFei:
         self.speaking = False
         self.last_interact_time = time.time()
         self.last_speak_data = ''
+
+        # 交互队列 用于存储用户发起的交互序列
         self.interactive = []
+
         self.sleep = False
         self.__running = True
         self.sp.connect()  # 预连接
@@ -214,16 +235,17 @@ class FeiFei:
                         if not config_util.config["interact"]["playSound"]: # 非展板播放
                             content = {'Topic': 'Unreal', 'Data': {'Key': 'question', 'Value': self.q_msg}}
                             wsa_server.get_instance().add_cmd(content)
+
                         #fay eyes
-                        fay_eyes = yolov8.new_instance()            
-                        if fay_eyes.get_status():#YOLO正在运行
-                            person_count, stand_count, sit_count = fay_eyes.get_counts()
-                            if person_count < 1: #看不到人，不互动
-                                 wsa_server.get_web_instance().add_cmd({"panelMsg": "看不到人，不互动"})
-                                 if not cfg.config["interact"]["playSound"]: # 非展板播放
-                                    content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "看不到人，不互动"}}
-                                    wsa_server.get_instance().add_cmd(content)
-                                 continue
+                        # fay_eyes = yolov8.new_instance()            
+                        # if fay_eyes.get_status():#YOLO正在运行
+                        #     person_count, stand_count, sit_count = fay_eyes.get_counts()
+                        #     if person_count < 1: #看不到人，不互动
+                        #          wsa_server.get_web_instance().add_cmd({"panelMsg": "看不到人，不互动"})
+                        #          if not cfg.config["interact"]["playSound"]: # 非展板播放
+                        #             content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "看不到人，不互动"}}
+                        #             wsa_server.get_instance().add_cmd(content)
+                        #          continue
                         
                         # [legency] 关闭QA配对文档
                         # answer = self.__get_answer(interact.interleaver, self.q_msg)#确定是否命中指令或q&a
@@ -270,7 +292,9 @@ class FeiFei:
             except BaseException as e:
                 print(e)
 
+    # 在通过命令行输入时 调用了此处的
     def on_interact(self, interact: Interact):
+        # 向交互序列中添加交互信息
         self.interactive.append(interact)
         MyThread(target=self.__update_mood, args=[interact.interact_type]).start()
         MyThread(target=storer.storage_live_interact, args=[interact]).start()

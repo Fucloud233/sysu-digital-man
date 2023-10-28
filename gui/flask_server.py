@@ -78,7 +78,7 @@ def api_get_data():
     wsa_server.get_web_instance().add_cmd({"deviceList": __get_device_list()})
     return json.dumps({'config': config_util.config})
 
-
+# 启动数字人
 @__app.route('/api/start-live', methods=['post'])
 def api_start_live():
     # time.sleep(5)
@@ -87,7 +87,7 @@ def api_start_live():
     wsa_server.get_web_instance().add_cmd({"liveState": 1})
     return '{"result":"successful"}'
 
-
+# 结束数字人
 @__app.route('/api/stop-live', methods=['post'])
 def api_stop_live():
     # time.sleep(1)
@@ -96,11 +96,29 @@ def api_stop_live():
     wsa_server.get_web_instance().add_cmd({"liveState": 0})
     return '{"result":"successful"}'
 
+# 向fay_core 发送消息 (不会启用TTS服务)
 @__app.route('/api/send', methods=['post'])
 def api_send():
     data = request.values.get('data')
     info = json.loads(data)
     text = fay_core.send_for_answer(info['msg'],info['sendto'])
+    return '{"result":"successful","msg":"'+text+'"}'
+
+# 向fay_booter 发送消息
+@__app.route('/api/ask', methods=['post'])
+def api_ask():
+    if not fay_booter.is_start():
+        return {
+            "result": "error",
+            "msg": "fay-booter is not running!"
+        }
+
+    data = request.values.get('data')
+
+    print(data)
+
+    info = json.loads(data)
+    text = fay_booter.ask(info['msg'])
     return '{"result":"successful","msg":"'+text+'"}'
 
 @__app.route('/api/get-msg', methods=['post'])
