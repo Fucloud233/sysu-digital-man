@@ -75,7 +75,7 @@ class Speech:
             result = self.__synthesizer.speak_ssml(ssml)
             audio_data_stream = speechsdk.AudioDataStream(result)
 
-            file_url = './samples/sample-' + str(int(time.time() * 1000)) + '.mp3'
+            file_url = 'data/samples/sample-' + str(int(time.time() * 1000)) + '.mp3'
             audio_data_stream.save_to_wav_file(file_url)
             if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
                 self.__history_data.append((voice_name, style, text, file_url))
@@ -100,7 +100,7 @@ class Speech:
                    '</voice>' \
                    '</speak>'.format(voice_name, style, 1.8, text)
             try:
-                file_url = './samples/sample-' + str(int(time.time() * 1000)) + '.mp3'
+                file_url = 'data/samples/sample-' + str(int(time.time() * 1000)) + '.mp3'
                 asyncio.new_event_loop().run_until_complete(self.get_edge_tts(text,voice_name,file_url))
                 self.__history_data.append((voice_name, style, text, file_url))
             except Exception as e :

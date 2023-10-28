@@ -9,7 +9,8 @@ from core import wsa_server
 from scheduler.thread_manager import MyThread
 from utils import config_util
 
-LOGS_FILE_URL = "logs/log-" + time.strftime("%Y%m%d%H%M%S") + ".log"
+LOGS_PATH = "data/logs"
+LOGS_FILE_URL = LOGS_PATH + '/' + "log-" + time.strftime("%Y%m%d%H%M%S") + ".log"
 
 def cal_time(begin: datetime, end: datetime):
     sub_time = end - begin
@@ -21,14 +22,12 @@ def random_hex(length):
         result = '0' * (length - len(result)) + result
     return result
 
-
 def __write_to_file(text):
-    if not os.path.exists("logs"):
-        os.mkdir("logs")
+    if not os.path.exists(LOGS_PATH):
+        os.mkdir(LOGS_PATH)
     file = codecs.open(LOGS_FILE_URL, 'a', 'utf-8')
     file.write(text + "\n")
     file.close()
-
 
 def printInfo(level, sender, text, send_time=-1):
     if send_time < 0:
@@ -43,6 +42,14 @@ def printInfo(level, sender, text, send_time=-1):
             wsa_server.get_instance().add_cmd(content)
     MyThread(target=__write_to_file, args=[logStr]).start()
 
+
+# 清楚log缓存
+def clear_log():
+    if not os.path.exists(LOGS_PATH):
+        os.mkdir(LOGS_PATH)
+    for file_name in os.listdir(LOGS_PATH):
+        if file_name.endswith('.log'):
+            os.remove(LOGS_PATH + '/' + file_name)
 
 def log(level, text):
     printInfo(level, "系统", text)

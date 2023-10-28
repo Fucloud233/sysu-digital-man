@@ -9,19 +9,22 @@ from ai_module import ali_nls
 from core import wsa_server
 from gui import flask_server
 from gui.window import MainWindow
+
+from utils import util
 from utils import config_util
 from scheduler.thread_manager import MyThread
 from core.content_db import Content_Db
 import sys
 sys.setrecursionlimit(sys.getrecursionlimit() * 5)
 
-def __clear_samples():
-    if not os.path.exists("./samples"):
-        os.mkdir("./samples")
-    for file_name in os.listdir('./samples'):
-        if file_name.startswith('sample-'):
-            os.remove('./samples/' + file_name)
+SAMPLES_PATH = "data/samples"
 
+def __clear_samples():
+    if not os.path.exists(SAMPLES_PATH):
+        os.mkdir(SAMPLES_PATH)
+    for file_name in os.listdir(SAMPLES_PATH):
+        if file_name.startswith('sample-'):
+            os.remove(SAMPLES_PATH + '/' + file_name)
 
 def __clear_songs():
     if not os.path.exists("./songs"):
@@ -30,22 +33,15 @@ def __clear_songs():
         if file_name.endswith('.mp3'):
             os.remove('./songs/' + file_name)
 
-def __clear_logs():
-    if not os.path.exists("./logs"):
-        os.mkdir("./logs")
-    for file_name in os.listdir('./logs'):
-        if file_name.endswith('.log'):
-            os.remove('./logs/' + file_name)
-           
-
-
 if __name__ == '__main__':
     if sys.version_info < (3, 10):
         raise ImportError("Python版本必须大于等于 3.10!")
 
+    # 清除之前的缓存
     __clear_samples()
     __clear_songs()
-    __clear_logs()
+    util.clear_log()
+
     config_util.load_config()
     dbstatus = os.path.exists("fay.db")
     if(dbstatus == False):
