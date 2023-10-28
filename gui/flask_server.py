@@ -114,12 +114,12 @@ def api_ask():
         }
 
     data = request.values.get('data')
-
-    print(data)
-
     info = json.loads(data)
-    text = fay_booter.ask(info['msg'])
-    return '{"result":"successful","msg":"'+text+'"}'
+
+    # 调用fay_booter询问
+    fay_booter.ask(info['msg'])
+
+    return '{"result":"successful"}'
 
 @__app.route('/api/get-msg', methods=['post'])
 def api_get_Msg():
