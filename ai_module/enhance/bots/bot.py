@@ -18,7 +18,7 @@ prompt = "你现在知道这些知识：{}\n有同学问你这个问题：{}\n�
 sorry_prompt = "{}\n以上是同学向你问的问题，请你再考虑一下是否需要回答这个问题。" \
     "如果该问题是日常交流中可能会出现的问题，请正常回答他" \
     "如果该问题不属于日常交流，且与你中山大学介绍官的身份不相关，请委婉地拒绝他。" \
-    "无论是什么问题，请将回答字数控制在20字以内"
+
 
 def cal_average_distance(distances: list[float]):
     return sum(distances) / len(distances)
