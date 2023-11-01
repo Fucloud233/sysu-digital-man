@@ -53,7 +53,7 @@ def determine_nlp_strategy(sendto, question):
         bot = get_bot(cfg.key_chat_module)
 
         if bot == None:
-            raise RuntimeError('The bot type "{}" not found!'.format(bot_type))  
+            raise RuntimeError('The bot type "{}" not found!'.format(cfg.key_chat_module))  
 
         text = bot.talk(question)
 
@@ -214,16 +214,17 @@ class FeiFei:
                         if not config_util.config["interact"]["playSound"]: # 非展板播放
                             content = {'Topic': 'Unreal', 'Data': {'Key': 'question', 'Value': self.q_msg}}
                             wsa_server.get_instance().add_cmd(content)
+
                         #fay eyes
-                        fay_eyes = yolov8.new_instance()            
-                        if fay_eyes.get_status():#YOLO正在运行
-                            person_count, stand_count, sit_count = fay_eyes.get_counts()
-                            if person_count < 1: #看不到人，不互动
-                                 wsa_server.get_web_instance().add_cmd({"panelMsg": "看不到人，不互动"})
-                                 if not cfg.config["interact"]["playSound"]: # 非展板播放
-                                    content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "看不到人，不互动"}}
-                                    wsa_server.get_instance().add_cmd(content)
-                                 continue
+                        # fay_eyes = yolov8.new_instance()            
+                        # if fay_eyes.get_status():#YOLO正在运行
+                        #     person_count, stand_count, sit_count = fay_eyes.get_counts()
+                        #     if person_count < 1: #看不到人，不互动
+                        #          wsa_server.get_web_instance().add_cmd({"panelMsg": "看不到人，不互动"})
+                        #          if not cfg.config["interact"]["playSound"]: # 非展板播放
+                        #             content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "看不到人，不互动"}}
+                        #             wsa_server.get_instance().add_cmd(content)
+                        #          continue
                         
                         # [legency] 关闭QA配对文档
                         # answer = self.__get_answer(interact.interleaver, self.q_msg)#确定是否命中指令或q&a
@@ -250,10 +251,12 @@ class FeiFei:
                             content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "思考中..."}}
                             wsa_server.get_instance().add_cmd(content)
                         text,textlist = determine_nlp_strategy(1,self.q_msg)
-
                         self.a_msg = text
+
+                        # 向数据库中记录回答
                         contentdb.add_content('fay','speak',self.a_msg)
                         wsa_server.get_web_instance().add_cmd({"panelReply": {"type":"fay","content":self.a_msg}})
+
                         if len(textlist) > 1:
                             i = 1
                             while i < len(textlist):
