@@ -232,12 +232,15 @@ def start():
 def ask(message):
     # msg: 用户输入的句子
     feiFei.last_quest_time = time.time()
+
+    if len(message) == 0:
+        return
     
     # 向Fay发送消息
     interact = Interact("console", 1, {'user': '', 'msg': message})
-    thr = MyThread(target=feiFei.on_interact, args=[interact])
-    thr.start()
-    thr.join()
+    thread = MyThread(target=feiFei.on_interact, args=[interact])
+    thread.start()
+    thread.join()
 
 def is_start() -> bool:
     return __running
