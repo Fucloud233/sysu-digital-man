@@ -11,7 +11,9 @@ class QianfanModelType(IntEnum):
     ERNIE_Bot_turbo = 0
     ERNIE_Bot_4 = 1
 
-# 
+QIANFAN_SORRY_PROMPT = "{}\n以上是同学向你问的问题，请你再考虑一下是否需要回答这个问题。" \
+    "如果该问题是日常交流中可能会出现的问题，请正常回答他" \
+    "如果该问题不是中大相关的问题，且与你中山大学介绍官的身份不相关，请委婉地拒绝他。"
 
 class QianfanBot(Bot):
     def __init__(self):
@@ -20,6 +22,9 @@ class QianfanBot(Bot):
         self.__access_token = self.__get_access_token()
         self.__model_type = QianfanModelType.ERNIE_Bot_4
         # self.__model_type = QianfanModelType.ERNIE_Bot_turbo
+
+        # 修改拒绝时候的prompt
+        self.sys_prompt = QIANFAN_SORRY_PROMPT
 
     def _call_api(self, prompt: str):
         payload = json.dumps({

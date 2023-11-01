@@ -480,6 +480,25 @@ new Vue({
                 type: 'success'
             });
         },
+        // 向fay_booter 发送消息
+        ask() {
+            // 从文本框中获取问题
+            let text = this.send_msg;
+
+            let send_data = {
+                "msg": text
+            };
+            
+            // 向后端发送消息
+            let xhr = new XMLHttpRequest()
+            xhr.open("post", "http://127.0.0.1:5000/api/ask")
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+            xhr.send('data=' + encodeURIComponent(JSON.stringify(send_data)))
+
+            // 清除文本框中的内容
+            this.send_msg = "";
+        },
+        // 向fay_core 发送消息
         send(sendto) {
             let _this = this;
             let text = _this.send_msg;
@@ -593,9 +612,7 @@ new Vue({
             let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
             let gettime = yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
             return gettime;
-           
         }
-
     },
     mounted() {
         let _this = this;

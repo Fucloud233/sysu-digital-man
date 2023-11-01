@@ -5,12 +5,13 @@ import time
 
 from core.interact import Interact
 
-FILE_URL = "datas/data-" + time.strftime("%Y%m%d%H%M%S") + ".csv"
-
+# 修改聊天信息存储的位置
+MSG_PATH = 'data/msgs'
+FILE_URL = MSG_PATH + '/' + "data-" + time.strftime("%Y%m%d%H%M%S") + ".csv"
 
 def __write_to_file(text):
-    if not os.path.exists("datas"):
-        os.mkdir("datas")
+    if not os.path.exists(MSG_PATH):
+        os.mkdir(MSG_PATH)
     file = codecs.open(FILE_URL, 'a', 'utf-8')
     file.write(text + "\n")
     file.close()
