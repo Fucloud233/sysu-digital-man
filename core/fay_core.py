@@ -7,6 +7,7 @@ import time
 import wave
 import socket
 import json 
+import platform
 
 import eyed3
 from openpyxl import load_workbook
