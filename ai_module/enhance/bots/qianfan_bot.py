@@ -11,9 +11,11 @@ class QianfanModelType(IntEnum):
     ERNIE_Bot_turbo = 0
     ERNIE_Bot_4 = 1
 
-QIANFAN_SORRY_PROMPT = "{}\n以上是同学向你问的问题，请你再考虑一下是否需要回答这个问题。" \
-    "如果该问题是日常交流中可能会出现的问题，请正常回答他" \
-    "如果该问题不是中大相关的问题，且与你中山大学介绍官的身份不相关，请委婉地拒绝他。"
+# 如果是日常交流中可能会出现的问题，请直接照常回复。
+
+QIANFAN_SORRY_PROMPT = '''{}\n以上是同学向你问的问题，请你再考虑一下是否需要回答这个问题。
+如果此问题不是中大相关的问题，且与你中山大学介绍官的身份不相关，请通过委婉的方式拒绝他。
+否则请照常回复。回答时请控制字数在20字以内。你的回答：'''
 
 class QianfanBot(Bot):
     def __init__(self):
@@ -23,16 +25,15 @@ class QianfanBot(Bot):
         self.__model_type = QianfanModelType.ERNIE_Bot_4
         # self.__model_type = QianfanModelType.ERNIE_Bot_turbo
 
-        # 修改拒绝时候的prompt
-        self.sys_prompt = QIANFAN_SORRY_PROMPT
+        # customize the sorry prompt for qianfan model
+        self.sorry_prompt = QIANFAN_SORRY_PROMPT
 
     def _call_api(self, prompt: str):
         payload = json.dumps({
             "messages": [
                 {
                     "role": "user", "content": self.sys_prompt + '\n' + prompt,
-                    
-                }# "role": "user", "content": prompt
+                }
             ]
         })
         headers = {

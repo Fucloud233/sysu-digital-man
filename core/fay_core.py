@@ -56,7 +56,7 @@ def determine_nlp_strategy(sendto, question):
         bot = get_bot(chat_module)
 
         if bot == None:
-            raise RuntimeError('The bot type "{}" not found!'.format(chat_module))  
+            raise RuntimeError('The bot type "{}" not found!'.format(cfg.key_chat_module))  
 
         text = bot.talk(question)
 
@@ -273,10 +273,12 @@ class FeiFei:
                             content = {'Topic': 'Unreal', 'Data': {'Key': 'log', 'Value': "思考中..."}}
                             wsa_server.get_instance().add_cmd(content)
                         text,textlist = determine_nlp_strategy(1,self.q_msg)
-
                         self.a_msg = text
+
+                        # 向数据库中记录回答
                         contentdb.add_content('fay','speak',self.a_msg)
                         wsa_server.get_web_instance().add_cmd({"panelReply": {"type":"fay","content":self.a_msg}})
+
                         if len(textlist) > 1:
                             i = 1
                             while i < len(textlist):
